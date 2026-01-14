@@ -1,5 +1,6 @@
 // This file will handle the cart-related functionality of the application.
 const prompt = require('prompt-sync')({ sigint: true });
+const {ConsoleTrix} = require('./consoleTrix.js')
 
 let maxAge=120
 
@@ -7,20 +8,20 @@ let order = {
   items:[],
   view:function(){
     for(let x in this.items)
-      console.log(this.items[x][0],':','details: ',this.items[x][1].join(', '),'| number: ', x)
+      ConsoleTrix.focus(this.items[x][0],':','details: ',this.items[x][1].join(', '),'| number: ', x)
   },
   cancel:function(num){
     let _ =this.items[num]
-    console.log('removed:',_[0],':','details: ',_[1].join(', '),'| number: ', num)
+    ConsoleTrix.focus('removed:',_[0],':','details: ',_[1].join(', '),'| number: ', num)
     this.items.splice(num,1)
-    console.log('\nnew order\n')
+    ConsoleTrix.focus('\nnew order\n')
     this.view()
   },
   order:function(){
     maxAge=maxAge-this.items.length
     this.items=[]
-    console.log('order complete, thank you!')
-    console.log('your new max life age is',maxAge,'thank you for your donation of',120-maxAge,'years!!')
+    ConsoleTrix.status('order complete, thank you!')
+    ConsoleTrix.focus('your new max life age is',maxAge,'thank you for your donation of',120-maxAge,'years!!')
   }
 }
 
@@ -139,7 +140,7 @@ class SpellBook {
   static cast(command){
     //if command is doc ref
     if(command[0].startsWith('--')){
-      eval(`console.log(${command[0].replaceAll('--','__')})`)
+      eval(`ConsoleTrix.focus(${command[0].replaceAll('--','__')})`)
       return true
     }
     if(command[0].startsWith('*')){
@@ -154,18 +155,18 @@ class SpellBook {
     // param step start
     let p = 0
     let param = []
-    //console.log steps 
-    console.log(SpellBook.spells[command[0]][0])
+    //ConsoleTrix.focus steps 
+    ConsoleTrix.focus(SpellBook.spells[command[0]][0])
 
     while(p<SpellBook.spells[command[0]][1].length){
-      console.log(`step: ${p+1}/${SpellBook.spells[command[0]][1].length}`)
+      ConsoleTrix.log(`step: ${p+1}/${SpellBook.spells[command[0]][1].length}`)
       param[p] = prompt(`${SpellBook.spells[command[0]][1][p]} $ `)
       if(command==='misorder')return true
       console.log('\n')
       p++
     }
     order.items.push([command[0],[...param]])
-    console.log(SpellBook.spells[command[0]][2],command[0], 'has been added to the order!')
+    ConsoleTrix.log(SpellBook.spells[command[0]][2],command[0], 'has been added to the order!')
     return true
   }
 
